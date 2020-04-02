@@ -1,10 +1,11 @@
-import 'dotenv/config';
-import express from 'express';
+const express = require('express');
 
-import { errors } from 'celebrate';
-import cors from 'cors';
+const { errors } = require('celebrate');
+const cors = require('cors');
 
-import routes from './routes';
+const routes = require('./routes');
+
+require('dotenv/config');
 
 class App {
   constructor() {
@@ -24,4 +25,4 @@ class App {
   }
 }
 
-export default new App().server;
+module.exports = new App().server;

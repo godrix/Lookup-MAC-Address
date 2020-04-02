@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "nodemon src/server.js",
     "dev:debug": "nodemon --inspect src/server.js",
-    "build": "sucrase ./src -d /build --transforms javascript,imports",
+    "start": "node src/server.js",
     "fixEslint": "eslint --fix src --ext .js",
     "test": "cross-env NODE_ENV=test jest"
   },
