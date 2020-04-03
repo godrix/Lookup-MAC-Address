@@ -8,6 +8,6 @@ routes.get('/', async (req, res) => {
   return res.json({ 'hello world!': true });
 });
 
-routes.get('/mac/:mac', MacVendorController.index);
+routes.get('/:mac', MacVendorController.index);
 
 module.exports = routes;
