@@ -1,3 +1,4 @@
+const crypto = require('crypto');
 const fetch = require('node-fetch');
 
 const knex = require('../../database');
@@ -7,13 +8,14 @@ class MacVendorController {
     const { mac } = req.params;
 
     const macNumber = mac
-      .toUpperCase()
+      .toString()
       .replace(/[^0-9a-fA-F]/g, '')
+      .toUpperCase()
       .substring(0, 6);
 
-    if (macNumber < 6) {
+    if (macNumber.length < 6) {
       return res.status(401).json({
-        error: 'The mac address is not in a valid format',
+        error: 'The mac address is not valid format',
       });
     }
 
@@ -23,27 +25,22 @@ class MacVendorController {
       .first();
 
     if (!vendor) {
-      let newVendor;
+      const response = await fetch(`https://api.macvendors.com/${mac}`);
+      const data = await response.text();
 
-      await fetch(`https://api.macvendors.com/${macNumber}`)
-        .then(res => res.text())
-        .then(body => {
-          if (body.length === 33) {
-            return res.json({
-              error: 'The search term did not return any results',
-            });
-          }
-
-          newVendor = body;
+      if (data.length === 33) {
+        return res.json({
+          error: 'The search term did not return any results',
         });
+      }
 
       await knex('mac_vendor').insert({
-        id: macNumber,
+        id: crypto.randomBytes(4).toString('HEX'),
         mac: macNumber,
-        vendor: newVendor,
-      });
+        vendor: data,
+      }).ifN;
 
-      return res.json({ mac: macNumber, vendor: newVendor });
+      return res.json({ mac: macNumber, vendor: data });
     }
 
     return res.json(vendor);
